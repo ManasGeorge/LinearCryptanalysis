@@ -1,6 +1,9 @@
 Linear Cryptanalysis
 ===================
 
+The Cipher
+----------
+
 The first part of this project is implementing a toy cipher to perform
 Linear Cryptanalysis on. The cipher under attack is a toy cipher that I
 made up, christened TES (Toy Encrpytion Standard). 
@@ -101,4 +104,17 @@ intermediate value, Ci is the i'th bit of the ciphertext.
  ---------------------------
 
  I haven't done any testing to find optimal S-Boxes or permutations, so they're
- basicaly random right about now.
+ basically random right about now.
+
+Analysis
+--------
+
+The overarching idea behind the attack is outlined in [this paper](http://luca-giuzzi.unibs.it/corsi/Support/papers-cryptography/Matsui.pdf) by Matsui. The idea is that the SBoxes display linear
+behavior with some non-zero probability. By exploiting this slight bias,
+we can derive a linear approximation for the first (n-1) rounds of the cipher,
+which we can then use to check a guess for the subkey used in the last round.
+If our guess is correct, the approximation should hold for a significant
+number of ciphertexts partially deciphered using our guessed subkey. After finding
+the n'th round subkey in this manner, we can construct an (n-2) round approximation
+to recover the (n-1)th round subkey, and so on, until the entire key is recovered.
+
