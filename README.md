@@ -16,6 +16,7 @@ way: The i'th round subkey is the first 6'bits of the key, starting at the i'th
 position, wrapping around to the beginning of the key when you reach the end.
 
 So, for example, if the 7-bit key is 1011101, the four subkeys will be:
+
     k1 = 011101
     k2 = 111011
     k3 = 110110
