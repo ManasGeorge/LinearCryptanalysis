@@ -16,18 +16,19 @@
 //      Encrypt function
 //      Decrypt function
 
-class Cipher{
-private:
-    int SBoxes[3][64];
-    int invSBoxes[3][64];
-    int Perms[3][64];
-    int invPerms[3][64];
+class Cipher {
+  private:
+    const int blocksize = 64;
+    static int SBoxes[3][64];
+    static int invSBoxes[3][64];
+    static int Perms[3][64];
+    static int invPerms[3][64];
     int state;
     int keys[4];
     int key;
 
     void genKeys();
-public:
+  public:
     Cipher(int key);
     int encrypt(int plain);
     int decrypt(int cipher);
@@ -37,3 +38,4 @@ public:
 };
 
 #endif
+
