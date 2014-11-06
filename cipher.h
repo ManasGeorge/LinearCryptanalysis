@@ -18,7 +18,7 @@
 
 class Cipher {
   private:
-    const int blocksize = 64;
+    const int blocksize;
     static int SBoxes[3][64];
     static int invSBoxes[3][64];
     static int Perms[3][64];
