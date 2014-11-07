@@ -2,7 +2,7 @@ OBJS = cipher.cpp main.cpp analyst.cpp analyst.h
 
 CC = g++
 
-COMPILER_FLAGS = -w -std=c++11
+COMPILER_FLAGS = -w -std=c++11 -g
 
 LINKER_FLAGS = 
 
