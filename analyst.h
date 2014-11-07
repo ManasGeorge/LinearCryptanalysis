@@ -52,7 +52,7 @@ private:
     // the right hand sides results in a non zero bias.
     void findBestApprox(int i);
 public:
-    Analyst(Cipher cipher);
+    Analyst(const Cipher &cipher);
     int analyze();
 };
 
