@@ -13,11 +13,23 @@ int Cipher::Perms[3][64] = {
 int Cipher::invSBoxes[3][64] = {};
 int Cipher::invPerms[3][64] = {};
 
-Cipher::Cipher(int k) : blocksize(64) {
-    k = key;
+Cipher::Cipher(int k) : maxinput(64) {
+    key = k;
     genKeys();
 
-    for (int i  = 0; i < blocksize; i++)
+    for (int i  = 0; i < maxinput; i++) {
+        for (int j = 0; j < 3; j++) {
+            invSBoxes[j][SBoxes[j][i]] = i;
+            invPerms[j][Perms[j][i]] = i;
+        }
+    }
+}
+
+Cipher::Cipher(const Cipher &c) : maxinput(64) {
+    key = c.key;
+    genKeys();
+
+    for (int i  = 0; i < maxinput; i++)
         for (int j = 0; j < 3; j++) {
             invSBoxes[j][SBoxes[j][i]] = i;
             invPerms[j][Perms[j][i]] = i;
@@ -84,8 +96,6 @@ int Cipher::sbox(int i, int j) {
     return SBoxes[i][j];
 }
 
-
-
-
-
-
+int Cipher::perms(int i, int j) {
+    return Perms[i][j];
+}
