@@ -13,9 +13,6 @@
  */
 
 
-const static int maxinput = 64;
-const static int numKnown = 64;
-const static int numBoxes = 4;
 
 class Analyst {
 private:
@@ -51,6 +48,8 @@ private:
     // right hand side for a given lift hand side. Fills with -1 if none of
     // the right hand sides results in a non zero bias.
     void findBestApprox(int i);
+    void printApprox(int i);
+    void printBestApprox(int i);
 public:
     Analyst(const Cipher &cipher);
     int analyze();
