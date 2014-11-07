@@ -10,13 +10,17 @@ int Analyst::analyze() {
     int score[maxinput];
     printf("Approximating SBoxes\n");
 
-    for (int i = 0 ; i < numBoxes; i++)
+    for (int i = 0 ; i < numBoxes; i++) {
         approxSBox(i);
+        printApprox(i);
+    }
 
     printf("Finding best SBox approximations\n");
 
-    for (int i = 0; i < numBoxes; i++)
+    for (int i = 0; i < numBoxes; i++) {
         findBestApprox(i);
+        printBestApprox(i);
+    }
 
     printf("Chaining Approximations\n");
     chainApproximations();
@@ -77,11 +81,11 @@ void Analyst::chainApproximations() {
 
     // The lefts for the first round are simply all possible left hand sides,
     // in order
-    for (int i = 0; i < maxinput; i++)
+    for (int i = 1; i < maxinput; i++)
         lefts[i] = i;
 
-    for (int i = 0; i < numBoxes; i++)
-        for (int j = 0; j < maxinput; j++) {
+    for (int i = 1; i < numBoxes; i++)
+        for (int j = 1; j < maxinput; j++) {
             if (lefts[j] != -1) {
                 int right = bestApprox[i][lefts[j]];
 
@@ -92,14 +96,14 @@ void Analyst::chainApproximations() {
             }
         }
 
-    for (int i = 0; i < maxinput; i++)
+    for (int i = 1; i < maxinput; i++)
         totalApprox[i] = lefts[i];
 }
 
 int Analyst::countParityMatch(int plain, int decrypt) {
     int ret = 0;
 
-    for (int left  = 0; left  < maxinput; left ++) {
+    for (int left  = 1; left  < maxinput; left ++) {
         int right = totalApprox[left];
 
         if (right != -1)
@@ -111,13 +115,38 @@ int Analyst::countParityMatch(int plain, int decrypt) {
 }
 
 void Analyst::findBestApprox(int i) {
-    for (int left = 0; left < maxinput; left++) {
+    for (int left = 1; left < maxinput; left++) {
         int max = 0;
 
-        for (int right = 0; right < maxinput; right++)
+        for (int right = 1; right < maxinput; right++)
             if (bias[i][left][right] > max)
                 max = bias[i][left][right];
 
         bestApprox[i][left] = (max == 0) ? (-1) : (max);
     }
+}
+
+void Analyst::printApprox(int i) {
+    printf("%3s", "");
+
+    for (int j = 0; j < maxinput; j++)
+        printf("%3d", j);
+
+    for (int j = 0; j < maxinput; j++) {
+        printf("%3d", j);
+
+        for (int k = 0; k < maxinput; k++)
+            printf("%3d", bias[i][j][k]);
+
+        printf("\n");
+    }
+
+    printf("\n");
+}
+
+void Analyst::printBestApprox(int i) {
+    for (int j = 0; j < maxinput; j++)
+        printf("%d -> %d\n", j, bestApprox[i][j]);
+
+    printf("\n");
 }
