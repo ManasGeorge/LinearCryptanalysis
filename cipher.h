@@ -16,18 +16,23 @@
 //      Encrypt function
 //      Decrypt function
 
+const static int maxinput = 16;
+const static int numKnown = 16;
+const static int numBoxes = 4;
+const static int blocksize = 4;
+
 class Cipher {
 private:
-    const int maxinput;
-    static int SBoxes[3][64];
-    static int invSBoxes[3][64];
-    static int Perms[3][64];
-    static int invPerms[3][64];
+    static int SBoxes[numBoxes][maxinput];
+    static int invSBoxes[numBoxes][maxinput];
+    static int Perms[numBoxes][maxinput];
+    static int invPerms[numBoxes][maxinput];
     int state;
     int keys[4];
     int key;
 
     void genKeys();
+    int rol(int i, int j);
 public:
     Cipher(int key);
     Cipher(const Cipher &c);
