@@ -120,4 +120,3 @@ If our guess is correct, the approximation should hold for a significant
 number of ciphertexts partially deciphered using our guessed subkey. After finding
 the n'th round subkey in this manner, we can construct an (n-2) round approximation
 to recover the (n-1)th round subkey, and so on, until the entire key is recovered.
-
