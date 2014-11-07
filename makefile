@@ -11,3 +11,4 @@ OBJ_NAME = out
 all : $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 	./$(OBJ_NAME)
+	rm -rf out
