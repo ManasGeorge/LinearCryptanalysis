@@ -1,4 +1,4 @@
-OBJS = cipher.cpp main.cpp
+OBJS = cipher.cpp main.cpp analyst.cpp analyst.h
 
 CC = g++
 
