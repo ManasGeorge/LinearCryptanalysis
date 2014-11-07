@@ -17,8 +17,8 @@
 //      Decrypt function
 
 class Cipher {
-  private:
-    const int blocksize;
+private:
+    const int maxinput;
     static int SBoxes[3][64];
     static int invSBoxes[3][64];
     static int Perms[3][64];
@@ -28,14 +28,17 @@ class Cipher {
     int key;
 
     void genKeys();
-  public:
+public:
     Cipher(int key);
+    Cipher(const Cipher &c);
     int encrypt(int plain);
     int decrypt(int cipher);
     int round(int i);
     int invRound(int i);
     int sbox(int i, int j);
+    int perms(int i, int j);
 };
 
 #endif
+
 
