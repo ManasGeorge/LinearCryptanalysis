@@ -124,12 +124,6 @@ to recover the (n-1)th round subkey, and so on, until the entire key is recovere
 ToDo
 ====
 
-Find a better way to chain the approximations - reduce to a single approximation,
-the best one. As it stands, the program will not work. We are testing using
-multiple, contradictory approximations (without the key information, we cannot
-know if an approximation is affine or not). Reducing to the single best
-approximation wil help with this.
-
-Show that the key we need results in the highest score with this approximation.
-
-Figure out how to test keys.
+Check the SBox approximations (do all the rows and columns add up to 8?)
+Check the chaining. Are all chains valid chains?
+Check the biases. Does a high bias really correspond to a good approximation?
