@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-    Cipher c(4);
+    Cipher c(14);
     Analyst a(c);
     a.analyze();
 }
