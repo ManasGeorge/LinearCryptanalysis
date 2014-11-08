@@ -18,7 +18,7 @@
 
 const static int maxinput = 16;
 const static int numKnown = 16;
-const static int numBoxes = 4;
+const static int numBoxes = 3;
 const static int blocksize = 4;
 
 class Cipher {
