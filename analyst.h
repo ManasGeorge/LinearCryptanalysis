@@ -43,13 +43,14 @@ private:
     // evaluate whether or not the decrypt results from a valid key guess
     // If it is a legitimate decrypt, the approximation should hold, and the
     // number of parity matches should be high.
-    int countParityMatch(int plain, int decrypt);
+    int parityScore (int plain, int decrypt);
     // For round i, fills bestApprox[i] with the best approximation for the
     // right hand side for a given lift hand side. Fills with -1 if none of
     // the right hand sides results in a non zero bias.
     void findBestApprox(int i);
     void printApprox(int i);
     void printBestApprox(int i);
+    bool testKey(int i);
 public:
     Analyst(const Cipher &cipher);
     int analyze();
