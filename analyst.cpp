@@ -26,7 +26,7 @@ int Analyst::analyze() {
     chainApproximations();
     printf("Guessing final key\n");
 
-    for (int guess = 0; guess < maxinput; guess++) {
+    for (int guess = 1; guess < maxinput; guess++) {
         score[guess] = 0;
 
         for (int i  = 0 ; i < numKnown; i ++) {
@@ -35,7 +35,7 @@ int Analyst::analyze() {
         }
     }
 
-    for (int i = 0; i < maxinput; i++)
+    for (int i = 1; i < maxinput; i++)
         if (score[i] > score[key])
             key = i;
 
@@ -55,11 +55,13 @@ void Analyst::approxSBox(int i) {
         for (int right = 0; right < maxinput; right++) {
             bias[i][left][right] = -8;
 
-            for (int input = 0; input < maxinput; input++)
-                if (parity(left, input) == parity(right, input))
+            for (int input = 0; input < maxinput; input++){
+                int output = c.sbox(i,input);
+                if (parity(left, input) == parity(right, output))
                     bias[i][left][right]++;
+            }
 
-            bias[i][left][right] *= bias[i][left][right];
+            // bias[i][left][right] *= bias[i][left][right];
         }
 }
 
@@ -119,10 +121,10 @@ void Analyst::findBestApprox(int i) {
         int max = 0;
 
         for (int right = 1; right < maxinput; right++)
-            if (bias[i][left][right] > max)
-                max = bias[i][left][right];
+            if (bias[i][left][right] > bias[i][left][max])
+                max = right;
 
-        bestApprox[i][left] = (max == 0) ? (-1) : (max);
+        bestApprox[i][left] = (bias[i][left][max] == 0) ? (-1) : (max);
     }
 }
 
@@ -131,6 +133,8 @@ void Analyst::printApprox(int i) {
 
     for (int j = 0; j < maxinput; j++)
         printf("%3d", j);
+
+    printf("\n");
 
     for (int j = 0; j < maxinput; j++) {
         printf("%3d", j);
