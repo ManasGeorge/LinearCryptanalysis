@@ -30,21 +30,17 @@ Cipher::Cipher(int k) {
 
 Cipher::Cipher(const Cipher &c) {
     key = c.key;
-    genKeys();
 
-    for (int i  = 0; i < maxinput; i++)
-        for (int j = 0; j < 3; j++) {
-            invSBoxes[j][SBoxes[j][i]] = i;
-            invPerms[j][Perms[j][i]] = i;
-        }
+    for (int i = 0; i < maxinput; i++)
+        keys[i] = c.keys[i];
 }
 
 void Cipher::genKeys() {
-    for(int i = 0; i< 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
         keys[i] = rol(key, i) >> 1;
-        printf("Key %d is %d\n",i,keys[i]);
+        printf("Key %d is %x\n", i, keys[i]);
     }
+    printf("\n");
 }
 
 int Cipher::round(int i) {
@@ -95,8 +91,7 @@ int Cipher::perms(int i, int j) {
     return Perms[i][j];
 }
 
-int Cipher::rol(int i, int j){
-    int mask = (1 << (blocksize + 2)) - 1;
-    int lmsb = (i << j) & (!mask);
-    return ((i << j) & (mask)) | (lmsb >> (blocksize+2));
+int Cipher::rol(int i, int j) {
+    int mask = (1 << (blocksize + 1)) - 1;
+    return mask & ((i << j) | (i >> (blocksize +1 - j)));
 }
