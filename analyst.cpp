@@ -1,12 +1,12 @@
 #include "analyst.h"
 #include <cstdlib>
 #include <cstdio>
+#include <algorithm>
 
 Analyst::Analyst(const Cipher &cipher) : c(cipher) {
 }
 
 int Analyst::analyze() {
-    int key = 0;
     int score[maxinput];
     printf("Approximating SBoxes\n");
 
@@ -31,16 +31,28 @@ int Analyst::analyze() {
 
         for (int i  = 0 ; i < numKnown; i ++) {
             int decrypt = ciphers[i] ^ guess;
-            score[guess] += countParityMatch(plains[i], decrypt);
+            score[guess] += parityScore(plains[i], decrypt);
         }
     }
 
-    for (int i = 1; i < maxinput; i++)
-        if (score[i] > score[key])
-            key = i;
+    printf("Scores: \n");
 
-    printf("The guessed final key is: %d\n", key);
-    return key;
+    for (int i = 0; i < maxinput; i++)
+        printf("%d ", score[i]);
+
+    printf("\n");
+    int max_score = *std::max_element(score, score + maxinput);
+
+    for (int i = 1; i < maxinput; i++)
+        if (score[i] == max_score)
+            printf("Testing key %d\n", i);
+
+    // if (testKey(i)) {
+    // printf("Last round key found: %d\n", i);
+    // return i;
+    // }
+    // }
+    return 0;
 }
 
 void Analyst::fillPairs() {
@@ -55,13 +67,14 @@ void Analyst::approxSBox(int i) {
         for (int right = 0; right < maxinput; right++) {
             bias[i][left][right] = -8;
 
-            for (int input = 0; input < maxinput; input++){
-                int output = c.sbox(i,input);
+            for (int input = 0; input < maxinput; input++) {
+                int output = c.sbox(i, input);
+
                 if (parity(left, input) == parity(right, output))
                     bias[i][left][right]++;
             }
 
-            // bias[i][left][right] *= bias[i][left][right];
+            bias[i][left][right] *= bias[i][left][right];
         }
 }
 
@@ -74,7 +87,7 @@ int Analyst::parity(int mask, int input) {
         ret++;
     }
 
-    return ret;
+    return ret % 2;
 }
 
 void Analyst::chainApproximations() {
@@ -86,7 +99,7 @@ void Analyst::chainApproximations() {
     for (int i = 1; i < maxinput; i++)
         lefts[i] = i;
 
-    for (int i = 1; i < numBoxes; i++)
+    for (int i = 0; i < numBoxes; i++)
         for (int j = 1; j < maxinput; j++) {
             if (lefts[j] != -1) {
                 int right = bestApprox[i][lefts[j]];
@@ -100,9 +113,14 @@ void Analyst::chainApproximations() {
 
     for (int i = 1; i < maxinput; i++)
         totalApprox[i] = lefts[i];
+
+    for (int j = 0; j < maxinput; j++)
+        printf("%d -> %d\n", j, totalApprox[j]);
+
+    printf("\n");
 }
 
-int Analyst::countParityMatch(int plain, int decrypt) {
+int Analyst::parityScore(int plain, int decrypt) {
     int ret = 0;
 
     for (int left  = 1; left  < maxinput; left ++) {
@@ -153,4 +171,11 @@ void Analyst::printBestApprox(int i) {
         printf("%d -> %d\n", j, bestApprox[i][j]);
 
     printf("\n");
+}
+
+bool Analyst::testKey(int key) {
+    for (int i = 0; i < numKnown; i++)
+        ;
+
+    return true;
 }
