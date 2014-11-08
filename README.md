@@ -120,3 +120,16 @@ If our guess is correct, the approximation should hold for a significant
 number of ciphertexts partially deciphered using our guessed subkey. After finding
 the n'th round subkey in this manner, we can construct an (n-2) round approximation
 to recover the (n-1)th round subkey, and so on, until the entire key is recovered.
+
+ToDo
+====
+
+Find a better way to chain the approximations - reduce to a single approximation,
+the best one. As it stands, the program will not work. We are testing using
+multiple, contradictory approximations (without the key information, we cannot
+know if an approximation is affine or not). Reducing to the single best
+approximation wil help with this.
+
+Show that the key we need results in the highest score with this approximation.
+
+Figure out how to test keys.
