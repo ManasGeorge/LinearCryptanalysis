@@ -24,15 +24,25 @@ int Analyst::analyze() {
 
     printf("Chaining Approximations\n");
     chainApproximations();
+    printf("Finding best approximation chain\n");
+    findBestLeft();
     printf("Guessing final key\n");
 
-    for (int guess = 1; guess < maxinput; guess++) {
-        score[guess] = 0;
+    for (bestLeft = 1; bestLeft < maxinput; bestLeft ++) {
+        for (int guess = 0; guess < maxinput; guess++) {
+            score[guess] = -8;
 
-        for (int i  = 0 ; i < numKnown; i ++) {
-            int decrypt = ciphers[i] ^ guess;
-            score[guess] += parityScore(plains[i], decrypt);
+            for (int i  = 0 ; i < numKnown; i ++) {
+                int decrypt = ciphers[i] ^ guess;
+                score[guess] += parityScore(plains[i], decrypt);
+            }
+
+            score[guess] *= score[guess];
         }
+
+        for (int i = 0; i < maxinput; i++)
+            printf("%2d ", score[i]);
+        printf("\n");
     }
 
     printf("Scores: \n");
@@ -44,14 +54,11 @@ int Analyst::analyze() {
     int max_score = *std::max_element(score, score + maxinput);
 
     for (int i = 1; i < maxinput; i++)
-        if (score[i] == max_score)
-            printf("Testing key %d\n", i);
+        if (score[i] == max_score) {
+            printf("Last round key found: %d\n", i);
+            return i;
+        }
 
-    // if (testKey(i)) {
-    // printf("Last round key found: %d\n", i);
-    // return i;
-    // }
-    // }
     return 0;
 }
 
@@ -120,18 +127,32 @@ void Analyst::chainApproximations() {
     printf("\n");
 }
 
-int Analyst::parityScore(int plain, int decrypt) {
-    int ret = 0;
+void Analyst::findBestLeft() {
+    int totalBiases[maxinput];
 
-    for (int left  = 1; left  < maxinput; left ++) {
-        int right = totalApprox[left];
+    for (int i = 1; i < maxinput; i++) {
+        totalBiases[i] = 1;
 
-        if (right != -1)
-            if (parity(left, plain) == parity(right, decrypt))
-                ret++;
+        for (int j = i, k = 0; j != totalApprox[i]
+                && j != -1; j = bestApprox[k][j], k++) {
+            totalBiases[i] *= bias[k][j][bestApprox[k][j]];
+            printf("Multiplying bias of approximation %d -> %d: ", j, bestApprox[k][j]);
+            printf("%d\n", totalBiases[i]);
+        }
     }
 
-    return ret;
+    int maxBias = *std::max_element(totalBiases, totalBiases + maxinput);
+
+    for (int i = 1; i < maxinput; i++)
+        if (totalBiases[i] == maxBias)
+            bestLeft = i;
+
+    printf("Best left found: %d\n", bestLeft);
+}
+
+int Analyst::parityScore(int plain, int decrypt) {
+    int right = totalApprox[bestLeft ];
+    return (int)(parity(bestLeft, plain) == parity(right, decrypt));
 }
 
 void Analyst::findBestApprox(int i) {

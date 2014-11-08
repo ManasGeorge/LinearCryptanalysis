@@ -22,6 +22,7 @@ private:
     int totalApprox[maxinput];
     int plains[numKnown];
     int ciphers[numKnown];
+    int bestLeft;
 
     // Constructs known plain - cipher pairs
     void fillPairs();
@@ -51,6 +52,7 @@ private:
     void printApprox(int i);
     void printBestApprox(int i);
     bool testKey(int i);
+    void findBestLeft();
 public:
     Analyst(const Cipher &cipher);
     int analyze();
