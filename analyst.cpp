@@ -19,6 +19,7 @@ int Analyst::analyze() {
 
     for (int i = 0; i < numBoxes; i++) {
         findBestApprox(i);
+        // checkApprox(i);
         printBestApprox(i);
     }
 
@@ -27,6 +28,7 @@ int Analyst::analyze() {
     printf("Finding best approximation chain\n");
     findBestLeft();
     printf("Guessing final key\n");
+    fillPairs();
 
     for (bestLeft = 1; bestLeft < maxinput; bestLeft ++) {
         for (int guess = 0; guess < maxinput; guess++) {
@@ -35,6 +37,7 @@ int Analyst::analyze() {
             for (int i  = 0 ; i < numKnown; i ++) {
                 int decrypt = ciphers[i] ^ guess;
                 score[guess] += parityScore(plains[i], decrypt);
+                // printf("Checking %d and %d; score: %d\n",plains[i], decrypt, score[guess]);
             }
 
             score[guess] *= score[guess];
@@ -63,7 +66,7 @@ int Analyst::analyze() {
 }
 
 void Analyst::fillPairs() {
-    for (int i = 0; i < maxinput; i++) {
+    for (int i = 0; i < numKnown; i++) {
         plains[i] = rand() % maxinput;
         ciphers[i] = c.encrypt(plains[i]);
     }
@@ -81,7 +84,7 @@ void Analyst::approxSBox(int i) {
                     bias[i][left][right]++;
             }
 
-            bias[i][left][right] *= bias[i][left][right];
+            // bias[i][left][right] *= bias[i][left][right];
         }
 }
 
@@ -136,9 +139,12 @@ void Analyst::findBestLeft() {
         for (int j = i, k = 0; j != totalApprox[i]
                 && j != -1; j = bestApprox[k][j], k++) {
             totalBiases[i] *= bias[k][j][bestApprox[k][j]];
-            printf("Multiplying bias of approximation %d -> %d: ", j, bestApprox[k][j]);
-            printf("%d\n", totalBiases[i]);
+            printf("%2d -> %2d:", j, bestApprox[k][j]);
+            printf("%3d;\t", bias[k][j][bestApprox[k][j]]);
         }
+
+        printf("%4d\n",totalBiases[i]);
+        totalBiases[i] *= totalBiases[i];
     }
 
     int maxBias = *std::max_element(totalBiases, totalBiases + maxinput);
@@ -147,7 +153,7 @@ void Analyst::findBestLeft() {
         if (totalBiases[i] == maxBias)
             bestLeft = i;
 
-    printf("Best left found: %d\n", bestLeft);
+    printf("\nBest approx found: %d -> %d\n", bestLeft, totalApprox[bestLeft]);
 }
 
 int Analyst::parityScore(int plain, int decrypt) {
@@ -160,7 +166,7 @@ void Analyst::findBestApprox(int i) {
         int max = 0;
 
         for (int right = 1; right < maxinput; right++)
-            if (bias[i][left][right] > bias[i][left][max])
+            if (abs(bias[i][left][right]) > abs(bias[i][left][max]))
                 max = right;
 
         bestApprox[i][left] = (bias[i][left][max] == 0) ? (-1) : (max);
@@ -199,4 +205,16 @@ bool Analyst::testKey(int key) {
         ;
 
     return true;
+}
+
+void Analyst::checkApprox(int i){
+    for(int j = 0; j < maxinput; j++)
+    {
+        int sum = 0;
+        for(int k = 0; k < maxinput; k++)
+            sum += bias[i][k][j];
+        printf("%d ",sum);
+    }
+
+    printf("\n");
 }

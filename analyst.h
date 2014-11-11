@@ -53,6 +53,7 @@ private:
     void printBestApprox(int i);
     bool testKey(int i);
     void findBestLeft();
+    void checkApprox(int i);
 public:
     Analyst(const Cipher &cipher);
     int analyze();
